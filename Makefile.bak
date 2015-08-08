@@ -1,0 +1,128 @@
+version=v2.0
+src=_src
+output=_release
+revision_fl=r
+
+pyflag=$(src)/options/product.py
+jsflag=$(src)/static/js/product.js
+
+src_includes=webapp.py tests app db handlers log options utils static
+data_includes=app db handlers bin log  options settings.py static templates user_firmwares utils webapp.py
+
+clean_includes=$(src)/log/files/*.log* static/wavs/*
+
+emulator_src=tools/emulator
+ftp_url=ftp://pub:pub@192.168.10.55/releases/
+
+revision=$(shell cat $(revision_fl))
+date=$(shell date +%Y%m%d)
+
+help:
+	@echo Usage: make [\TARGET\]
+	@echo
+	@echo TARGET:
+	@echo "    ifpms    编译并打包ifpms版本"
+	@echo "    gsd      编译并打包gsd版本"
+	@echo "    js       将CoffeeScript编译成JavaScript"
+	@echo "    remove   清理生成的压缩包"
+	@echo "    clean    清理临时文件"
+	@echo
+
+
+ifpms: prepare build
+
+gsd: prepare build
+
+emu: build_emu
+
+js: static/js/*.coffee
+	coffee -c $<
+
+
+build_emu: clean
+	@echo "正在生成可执行文件"
+	cxfreeze --install-dir=$(output) --target-name=$(MAKECMDGOALS) $(emulator_src)/start.py
+	cp -rf $(emulator_src)/*.wav $(output)/
+
+	@echo "正在删除已存在的压缩包"
+	pkg="$(MAKECMDGOALS)-$(version)-r$(revision)-b$(date).tar.bz2";  \
+	rm -f $$pkg;                                                     \
+	echo "正在创建压缩包";                                             \
+	tar cjf $$pkg -C $(output) .;                                    \
+
+
+build: prepare
+	@echo "正在拷贝数据文件"
+	cp -r $(data_includes) $(output)/
+	cp -rf $(src)/static $(output)/
+
+	@echo "正在创建其他目录"
+	mkdir -p $(output)/log/files
+
+	@echo "删除历史log文件"
+	rm -rf $(output)/log/files/*.log*
+
+	@echo "正在删除已存在的压缩包"
+	pkg=$(MAKECMDGOALS)-$(version)-r$(revision)-b$(date).tar.bz2
+	rm -f $(MAKECMDGOALS)-$(version)-r$(revision)-b$(date).tar.bz2                                        
+	@echo "生成pyc"                         
+	(echo 'import compileall'; echo 'compileall.compile_dir("$(output)")') | python 
+	find $(output) -name "*.py" | xargs rm {} -rf
+	chmod 777 $(output)/webapp.pyc
+	cp settings.py $(output)
+	@echo "正在创建压缩包"
+	tar cvjf $(MAKECMDGOALS)-$(version)-r$(revision)-b$(date).tar.bz2  -C $(output) .; 
+
+prepare: clean
+	@echo "正在检查修订号文件"
+	if [ ! -f $(revision_fl) ];then                                        \
+		echo `svn info|grep Revision:|awk '{printf $2}'`>$(revision_fl);    \
+	fi                                                                      \
+
+	@echo "正在创建临时目录"
+	mkdir $(src) -p
+	mkdir $(output) -p
+
+	@echo "正在创建源代码副本"
+	cp -r $(src_includes) $(src)/
+	rm $(src)/utils/license_maker.py
+
+	@echo "正在修改产品标识到 $(MAKECMDGOALS)"
+	cp $(pyflag).$(MAKECMDGOALS) $(pyflag)
+	cp $(jsflag).$(MAKECMDGOALS) $(jsflag)
+
+	@echo "正在添加产品版本号"
+	echo "revision = '$(revision)'" >> $(pyflag)
+	echo "build = '$(date)'" >> $(pyflag)
+	bin/uglifyjs.sh $(src)/static/js
+
+python-lib: requirements.txt
+	@echo "正在检查Python包依赖"
+	@pip install -qr $<
+
+clean:
+	@echo "正在清理临时文件"
+	-find . -name "*.pyc"|xargs rm >/dev/null 2>&1
+	-rm -rf $(src)
+	-rm -rf $(output)
+	-rm -rf $(clean_includes)
+
+remove:
+	-rm -f *.tar.bz2 -f >/dev/null 2>&1
+	@echo "清理完成"
+
+upload:
+	@if which curl &>/dev/null;then                                         \
+		if ls *.tar.bz2 &>/dev/null; then                                  \
+			msg='上传完毕!下载地址如下:\n';                                   \
+			echo "正在上传";                                                  \
+			for bz2 in `ls *.tar.bz2`; do                                   \
+				curl -T $$bz2 $(ftp_url) && msg="$${msg}$(ftp_url)$$bz2\n";       \
+			done;                                                            \
+			echo -e $$msg;                                                    \
+		else                                                                \
+			echo "没有发现压缩包";                                             \
+		fi;                                                                  \
+	else                                                                    \
+		echo "请安装CURL";                                                    \
+	fi;                                                                      \

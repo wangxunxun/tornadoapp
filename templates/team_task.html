@@ -1,0 +1,820 @@
+{% extends "team_x.html" %}
+{% block body %}
+
+<div class="mod mission">
+    <div class="title">
+    	<div class="add">新建</div>
+        <div class="export">导出</div>
+        <div class="statistics"> 统计</div>
+        <h3>任务</h3>
+        <div class="select task">
+            <p>全部</p>
+            <ul>
+            	<li><a onclick="select_member_task_filter(this, 'all')" href="#">全部</a></li>
+                {%for m in members%}
+                <li onclick="select_member_task_filter(this, '{{str(m["email"])}}')" ><a href="javascript:;">{{m['name']}}</a></li>
+                {%end%}
+            </ul>
+        </div>
+        <div style="display:none" class="select people">
+            <p>所有</p>
+            <ul>
+                <li><a href="#">所有</a></li>
+                <li><a href="#">今日</a></li>
+                <li><a href="#">明日</a></li>
+                <li><a href="#">本周</a></li>
+            </ul>
+        </div>
+        <div class="set"><img src="/static/images/set.gif" title="设置"></div>
+    </div>
+        <div class="notstart">
+            <h2>未开始</h2>
+            {%for uts in main[0]%}
+            <dl class="member_filter_class member_filter_class_{{uts['id']}}">
+                <dt>{{ uts["username"] }}</dt>
+                {% for t in uts['tasks'] %}
+                <dd class="dd_taskid_{{t['id']}}">
+                    {%if t['priority'] == 0 %}
+                    <h3><span class="acute">紧急</span>{{t['name']}}</h3>
+                    {% elif t['priority'] == 1 %}
+                    <h3><span class="high">高</span>{{t['name']}}</h3>
+                    {% else %}
+                    <h3><span class="low">中低</span>{{t['name']}}</h3>
+                    {% end %}
+                    <em>{{t['dead_line_time'][0]}} {{t['dead_line_time'][1]}}</em>
+                    <b><img src="/static/images/cometo.gif" title="查看详细"></b>
+                </dd>
+                {%end%}
+            </dl>
+            {%end%}
+        </div>
+        <div class="inthe">
+            <h2>进行中</h2>
+            {%for uts in main[1]%}
+            <dl class="member_filter_class member_filter_class_{{uts['id']}}">
+                <dt>{{ uts["username"] }}</dt>
+                {% for t in uts['tasks'] %}
+                <dd class="dd_taskid_{{t['id']}}">
+                    {%if t['priority'] == 0 %}
+                    <h3><span class="acute">紧急</span>{{t['name']}}</h3>
+                    {% elif t['priority'] == 1 %}
+                    <h3><span class="high">高</span>{{t['name']}}</h3>
+                    {% else %}
+                    <h3><span class="low">中低</span>{{t['name']}}</h3>
+                    {% end %}
+                    <em>{{t['dead_line_time'][0]}} {{t['dead_line_time'][1]}}</em>
+                    <b><img src="/static/images/cometo.gif" title="查看详细"></b>
+                </dd>
+                {%end%}
+            </dl>
+            {%end%}
+        </div>
+        <div class="ended">
+            <h2>已完成</h2>
+            {%for uts in main[2]%}
+            <dl class="member_filter_class member_filter_class_{{uts['id']}}">
+                <dt>{{ uts["username"] }}</dt>
+                {% for t in uts['tasks'] %}
+                <dd class="dd_taskid_{{t['id']}}">
+                    {%if t['priority'] == 0 %}
+                    <h3><span class="acute">紧急</span>{{t['name']}}</h3>
+                    {% elif t['priority'] == 1 %}
+                    <h3><span class="high">高</span>{{t['name']}}</h3>
+                    {% else %}
+                    <h3><span class="low">中低</span>{{t['name']}}</h3>
+                    {% end %}
+                    <em>{{t['dead_line_time'][0]}} {{t['dead_line_time'][1]}}</em>
+                    <b><img src="/static/images/cometo.gif" title="查看详细"></b>
+                </dd>
+                {%end%}
+            </dl>
+            {%end%}
+        </div>
+        <div class="zdelay">
+            <h2>延后</h2>
+            {%for uts in main[3]%}
+            <dl class="member_filter_class member_filter_class_{{uts['id']}}">
+                <dt>{{ uts["username"] }}</dt>
+                {% for t in uts['tasks'] %}
+                <dd class="dd_taskid_{{t['id']}}">
+                    {%if t['priority'] == 0 %}
+                    <h3><span class="acute">紧急</span>{{t['name']}}</h3>
+                    {% elif t['priority'] == 1 %}
+                    <h3><span class="high">高</span>{{t['name']}}</h3>
+                    {% else %}
+                    <h3><span class="low">中低</span>{{t['name']}}</h3>
+                    {% end %}
+                    <em>{{t['dead_line_time'][0]}} {{t['dead_line_time'][1]}}</em>
+                    <b><img src="/static/images/cometo.gif" title="查看详细"></b>
+                </dd>
+                {%end%}
+            </dl>
+            {%end%}
+        </div>
+</div>
+
+<!--报告详情-->
+
+{% for s in main %}
+{% for us in s%}
+{% for t in us['tasks'] %}
+
+<div class="taskpop taskpop_{{t['id']}}">
+    <div class="title">
+        <h3>任务详情</h3>
+        <span><img src="/static/images/close.gif" title="关闭"></span>
+    </div>
+    <div class="cont">
+        <div class="name">
+            <span>任务名称：</span><input class="nofocus" id="update_task_name_{{t['id']}}" name="" type="text" value="{{t['name']}}" />
+        </div>
+        <div class="appoint">
+            <dl class="assign">
+                <dt><span class="select_span">指派成员：</span></dt>
+                <dd class="fix"> 
+                    <div class="select">
+                        <p class="team_task_detail_members" id="update_task_username_{{t['id']}}">{{t['username']}}({{t['useremail']}})</p>
+                        <ul>
+                            {%for m in members%}
+                            <li><a href="javascript:;">{{m['name']}}({{ m['email'] }})</a></li>
+                            {%end%}
+                        </ul>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+        <div class="appoint">
+            <dl class="assign">
+                <dt><span class="select_span"> 权重:</span></dt>
+                <dd class="fix"> 
+                    <div class="select">
+                        <p class="team_task_detail_members" id="update_task_weight_{{t['id']}}">{{t['weight']}}</p>
+                        <ul>                            
+                            <li><a href="javascript:;">1</a></li>
+                            <li><a href="javascript:;">2</a></li>
+                            <li><a href="javascript:;">3</a></li>
+                            <li><a href="javascript:;">4</a></li>
+                            <li><a href="javascript:;">5</a></li>                            
+                        </ul>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+
+        <div class="appoint">
+            <dl class="assign">
+                <dt><span class="select_span"> 任务评分:</span></dt>
+                <dd class="fix"> 
+                    <div class="select">
+                        <p class="team_task_detail_members" id="update_task_score_{{t['id']}}">{{t['score']}}</p>
+                        <ul>                            
+                            <li><a href="javascript:;">1.5</a></li>
+                            <li><a href="javascript:;">1.4</a></li>
+                            <li><a href="javascript:;">1.3</a></li>
+                            <li><a href="javascript:;">1.2</a></li>
+                            <li><a href="javascript:;">1.1</a></li>
+                            <li><a href="javascript:;">1.0</a></li>
+                            <li><a href="javascript:;">0.9</a></li>
+                            <li><a href="javascript:;">0.8</a></li>
+                            <li><a href="javascript:;">0.7</a></li>
+                            <li><a href="javascript:;">0.6</a></li>
+                            <li><a href="javascript:;">0.5</a></li>
+                        </ul>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+
+        <div class="plantime">
+            <span>计划完成时间：</span>
+            <input id="update_task_dead_line_{{t['id']}}" class="nofocus update_dead_line_time" name="" type="text" value="{{t['dead_line_time'][0]}} {{t['dead_line_time'][1]}}" />
+        </div>
+        <h3>任务详情</h3>
+        <div class="txt">
+            <textarea class="nofocus" id="update_task_explain_{{t['id']}}" name="" cols="" rows="">{{t['explain']}}</textarea> 
+        </div>
+        <h3>备注</h3>
+        <div class="txt">
+            <textarea class="nofocus" name="" id="update_task_remarks_{{t['id']}}" cols="" rows="">{{t['remarks']}}</textarea> 
+        </div>
+
+        <div class='txt'>
+            <dl class="priority">
+                <dt><span>优先级：</span></dt>
+                <dd>
+                    <ul class="fix" id="update_task_priority_{{t['id']}}">
+                        {%if t['priority'] == 0 %}
+                        <li class="cur cur_class_change"><a class="acute" href="#">紧急</a></li>
+                        <li class='cur_class_change'><a class="high" href="#">高</a></li>
+                        <li class='cur_class_change'><a class="low" href="#">中</a></li>
+                        <li class='cur_class_change'><a class="low" href="#">低</a></li>
+                        {% elif t['priority'] == 1 %}
+                        <li class="cur_class_change"><a class="acute" href="#">紧急</a></li>
+                        <li class='cur cur_class_change'><a class="high" href="#">高</a></li>
+                        <li class='cur_class_change'><a class="low" href="#">中</a></li>
+                        <li class='cur_class_change'><a class="low" href="#">低</a></li>
+                        {% elif t['priority'] == 2 %}
+                        <li class="cur_class_change"><a class="acute" href="#">紧急</a></li>
+                        <li class='cur_class_change'><a class="high" href="#">高</a></li>
+                        <li class='cur cur_class_change'><a class="low" href="#">中</a></li>
+                        <li class='cur_class_change'><a class="low" href="#">低</a></li>
+                        {% else %}
+                        <li class="cur_class_change"><a class="acute" href="#">紧急</a></li>
+                        <li class='cur_class_change'><a class="high" href="#">高</a></li>
+                        <li class='cur_class_change'><a class="low" href="#">中</a></li>
+                        <li class='cur cur_class_change'><a class="low" href="#">低</a></li>
+                        {% end %}
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+        {% if t['status'] == 0 %}
+        <div class="switch nostart">
+            <p id="update_task_status_{{t['id']}}">未开始</p>
+            <ul>
+                <li><a href="javascript:;">未开始</a></li>
+                <li><a href="javascript:;">进行中</a></li>
+                <li><a href="javascript:;">已完成</a></li>
+                <li><a href="javascript:;">延后</a></li>
+            </ul>
+        </div>
+        <div class="progress" style="display:none">
+            <span>完成度</span>
+            <div class="bar">
+                <div class="rate"></div>
+                <div class="pre" id="update_task_done_100_{{t['id']}}" >{{t['done_100']}}%</div>
+            </div>
+        </div>
+
+        <div class="status_change_select" style="display:none">
+            <dl class="reminder">
+                <dt><span class="real_time_start_done_class">开始时间:</span></dt>
+                <dd class="fix"> 
+                    <div class="select">
+                        <input name="" type="text" class="time_input"  value="{{t['start_time'][0] }}" id="real_time_start_done_{{t['id']}}" class="real_time_start_done_class_input" />
+                    </div>
+                </dd>
+            </dl>
+        </div>
+
+        {% elif t['status'] == 1 %}
+        <div class="switch doing">
+            <p id="update_task_status_{{t['id']}}">进行中</p>
+            <ul>
+                <li><a href="javascript:;">未开始</a></li>
+                <li><a href="javascript:;">进行中</a></li>
+                <li><a href="javascript:;">已完成</a></li>
+                <li><a href="javascript:;">延后</a></li>
+            </ul>
+        </div>
+        <div class="progress" style="display:block">
+            <span>完成度</span>
+            <div class="bar">
+                <div class="rate"></div>
+                <div class="pre" id="update_task_done_100_{{t['id']}}" >{{t['done_100']}}%</div>
+            </div>
+        </div>
+        <div class="status_change_select" style="display:block">
+            <dl class="reminder">
+                <dt><span class="real_time_start_done_class">开始时间:</span></dt>
+                <dd class="fix"> 
+                    <div class="select">
+                        <input name="" type="text" value="{{t['start_time'][0] }}" class="time_input" id="real_time_start_done_{{t['id']}}" class="real_time_start_done_class_input" />
+                    </div>
+                </dd>
+            </dl>
+        </div>
+        {% elif t['status'] == 2 or t['status'] == 4 %}
+        <div class="switch finish">
+            <p id="update_task_status_{{t['id']}}">已完成</p>
+            <ul>
+                <li><a href="javascript:;">未开始</a></li>
+                <li><a href="javascript:;">进行中</a></li>
+                <li><a href="javascript:;">已完成</a></li>
+                <li><a href="javascript:;">延后</a></li>
+            </ul>
+        </div>
+        <div class="progress" style="display:block">
+            <span>完成度</span>
+            <div class="bar">
+                <div class="rate"></div>
+                <div class="pre" id="update_task_done_100_{{t['id']}}" >{{t['done_100']}}%</div>
+            </div>
+        </div>
+        <div class="status_change_select" style="display:block">
+            <dl class="reminder">
+                <dt><span class="real_time_start_done_class">完成时间:</span></dt>
+                <dd class="fix">
+                    <div class="select">
+                        <input name="" type="text" class="time_input"  value="{{t['done_time'][0] }}" id="real_time_start_done_{{t['id']}}" class="real_time_start_done_class_input" />
+                    </div>
+                </dd>
+            </dl>
+        </div>
+        {% else %}
+        <div class="switch delay">
+            <p id="update_task_status_{{t['id']}}">延后</p>
+            <ul>
+                <li><a href="javascript:;">未开始</a></li>
+                <li><a href="javascript:;">进行中</a></li>
+                <li><a href="javascript:;">已完成</a></li>
+                <li><a href="javascript:;">延后</a></li>
+            </ul>
+        </div>
+        <div class="progress" style="display:none">
+            <span>完成度</span>
+            <div class="bar">
+                <div class="rate"></div>
+                <div class="pre" id="update_task_done_100_{{t['id']}}" >{{t['done_100']}}%</div>
+            </div>
+        </div>
+        <div class="status_change_select" style="display:none">
+            <dl class="reminder">
+                <dt><span class="real_time_start_done_class">开始时间:</span></dt>
+                <dd class="fix"> 
+                    <div class="select">
+                        <input name="" type="text" class="time_input"  value="{{t['start_time'][0] }}" id="real_time_start_done_{{t['id']}}" class="real_time_start_done_class_input" />
+                    </div>
+                </dd>
+            </dl>
+        </div>
+        {% end %}
+        <div class="btn"><a class="modbtn1" onclick="update_task('{{t['id']}}')" href="#">提交</a><a class="modbtn1" onclick="delete_task('{{t['id']}}')" href="#">删除</a></div>
+    </div>
+</div>
+
+{% end %}
+{% end %}
+{% end %}
+
+<!--新建任务-->
+<div class="modpop newtask">
+    <div class="title">
+        <h3>新建任务</h3>
+        <span><img src="/static/images/close.gif" title="关闭"></span>
+    </div>
+    <div class="cont">
+        <dl class="timename">
+            <dt><span>任务名称：</span></dt>
+            <dd>
+                <input name=""  id="new_task_name" type="text"  value="请输入任务名称" />
+            </dd>
+        </dl>
+        <dl class="assign">
+            <dt><span>指派成员：</span></dt>
+            <dd class="fix"> 
+                <div class="select">
+                    <p  id="new_task_user"></p>
+                    <ul>
+                        {%for m in members%}
+                        <li><a href="javascript:;">{{m['name']}}({{ m['email'] }})</a></li>
+                        {%end%}
+                    </ul>
+                </div>
+            </dd>
+        </dl>
+        <dl class="taskarea">
+            <dt><span>任务详情：</span></dt>
+            <dd>
+                <textarea name="" cols="" id="new_task_explain" rows="">请对此任务做详细描述</textarea>
+            </dd>
+        </dl>
+        <dl class="reminder">
+            <dt><span>计划完成时间:</span><span class="setweight">权重:</span></dt>
+            <dd class="fix"> 
+                <div class="select">
+                    <input name="" type="text" id="datetimepicker8" />
+                </div>
+                <div class="txt">
+                <div class="select">
+                    <p class='add_role' id="datetimepicker9">1</p>
+                    <ul>
+                        <li><a href="javascript:;">1</a></li>
+                        <li><a href="javascript:;">2</a></li>
+                        <li><a href="javascript:;">3</a></li>
+                        <li><a href="javascript:;">4</a></li>
+                        <li><a href="javascript:;">5</a></li>
+                    </ul>
+                </div>
+
+                </div>
+            </dd>
+        </dl>
+        <dl class="priority">
+            <dt><span>优先级：</span></dt>
+            <dd>
+                <ul class="fix" id="new_task_priority">
+                    <li class="cur cur_class_change"><a class="acute" href="#">紧急</a></li>
+                    <li class='cur_class_change'><a class="high" href="#">高</a></li>
+                    <li class='cur_class_change'><a class="low" href="#">中</a></li>
+                    <li class='cur_class_change'><a class="low" href="#">低</a></li>
+                </ul>
+            </dd>
+        </dl>
+        <div class="btn"><a class="modbtn1" href="javascript:;" onclick="addTask()">确　定</a></div>
+    </div>
+</div>
+
+
+
+<div class="modpop statistics_kpi_pop">
+    <div class="title">
+        <h3>绩效统计</h3>
+        <span><img src="/static/images/close.gif" title="关闭"></span>
+    </div>
+    <div class="cont">
+        <dl class="timeset">
+          <dt><span>开始日期：</span></dt>
+            <dd>
+                <input name="" type="text" id="statistics_start_time" value=""/>
+            </dd>
+        </dl>
+        <dl class="timeset">
+          <dt><span>结束日期：</span></dt>
+            <dd>
+                <input name="" type="text" id="statistics_stop_time" value=""/>
+            </dd>
+        </dl>
+
+        <div class="appoint">
+            <dl class="assign">
+                <dt><span class="select_span">导出内容：</span></dt>
+                <dd class="fix"> 
+                    <div class="select">
+                        <p id="statistics_type">全部</p>
+                        <ul>
+                            <li><a href="javascript:;">全部</a></li>
+                            {%for m in members%}
+                            <li><a href="javascript:;">{{m['name']}}({{ m['email'] }})</a></li>
+                            {%end%}
+                        </ul>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+        
+        <div class="btn"><a class="modbtn1" href="javascript:;" onclick="updateTaskSet()" >确　定</a></div>
+    </div>
+</div>
+
+<!--任务设置-->
+<div class="modpop taskset">
+	<div class="title">
+    	<h3>任务设置</h3>
+        <span><img src="/static/images/close.gif" title="关闭"></span>
+    </div>
+    <div class="cont">
+    	<dl class="timeset">
+          <dt><span>个人任务汇总发布时间：</span></dt>
+            <dd>
+                <input name="" type="text" id="datetimepicker10" value="{{ thisteam['member_task_summary_time'] }}"/>
+            </dd>
+        </dl>
+        <dl class="timeset" style="height:200px;">
+          <dt><span>团队任务汇总发布时间：</span></dt>
+            <dd>
+                <input name="" type="text" id="datetimepicker11" value="{{ thisteam['team_task_summary_time'] }}"/>
+            </dd>
+        </dl>
+        <div class="btn"><a class="modbtn1" href="javascript:;" onclick="updateTaskSet()" >确　定</a></div>
+    </div>
+</div>
+
+ {% end %}
+
+{% block script %}
+
+<script>
+$(function(){
+	$('#datetimepicker8').datetimepicker({
+        lang:'ch',//中文化
+        timepicker:false,//关闭时间
+        format:'Y年m月d日',
+    });
+        
+	$('#datetimepicker10').datetimepicker({
+		datepicker:false,
+		format:'H:i',
+		step:5
+	});
+	$('#datetimepicker11').datetimepicker({
+		datepicker:false,
+		format:'H:i',
+		step:5
+	});
+    $('#datetimepicker12').datetimepicker({
+        format:'Y年m月d日 H:i',
+        step:5
+    });
+    $('#statistics_start_time').datetimepicker({
+        lang:'ch',//中文化
+        timepicker:false,//关闭时间
+        format:'Y年m月d日',
+    });
+    $('#statistics_stop_time').datetimepicker({
+        lang:'ch',//中文化
+        timepicker:false,//关闭时间
+        format:'Y年m月d日',
+    });
+    
+
+    $('.update_dead_line_time').datetimepicker({
+        lang:'ch',//中文化
+        timepicker:false,//关闭时间
+        format:'Y年m月d日',
+    });
+
+    //任务详情
+    {% for s in main %}
+    {% for us in s%}
+    {% for t in us['tasks'] %}
+    $(".taskpop_{{t['id']}}").popBox({
+        oPop:"detail",
+        oTitMove:".title",
+        oClose:"span",
+        oBtn:".dd_taskid_{{t['id']}}",
+        giveup:{onoff:true},
+        detail:{onoff:true}
+    });
+
+    $('#real_time_start_done_{{t["id"]}}').datetimepicker({
+        lang:'ch',//中文化
+        timepicker:false,//关闭时间
+        format:'Y年m月d日',
+    });
+    
+    {%end%}
+    {%end%}
+    {%end%}
+    
+})
+
+function checkout_add_task(name,explain,user,y_m_d,h_m_s,priority)
+{
+    if(name){}
+    else{
+        alert("请填写任务名称");
+        return false;
+    }
+    if(explain){}
+    else{
+        alert("请填写任务描述");
+        return false;
+    }
+    if(user){}
+    else{
+        alert("请选择执行者");
+        return false;
+    }
+    if(y_m_d){}
+    else{
+        alert("请填写完成时间");
+        return false;
+    }
+    if(h_m_s){}
+    else{
+        alert("请填写完成时间");
+        return false;
+    }
+    return true;
+}
+
+function addTask()
+{
+    var name = $("#new_task_name").val();
+    var explain = $("#new_task_explain").val();
+    var user = $("#new_task_user").html();
+    var y_m_d = $("#datetimepicker8").val();
+    var h_m_s = "23:59";
+    var weight = $("#datetimepicker9").html();
+    var priority = $("#new_task_priority").find('li.cur a').html();
+    if(priority=="紧急"){
+        priority = 0;
+    }else if(priority=="高"){
+        priority = 1;
+    }else if(priority=="中"){
+        priority = 2;
+    }else if(priority=="低"){
+        priority = 3;
+    }else {
+        priority = 7;
+    }
+
+    var flag = checkout_add_task(name,explain,user,y_m_d,h_m_s,priority);
+
+    if (flag){
+        var dead_line_time =  parseInt(y_m_d.split("年")[0]) + " " + parseInt(y_m_d.split("年")[1].split("月")[0]) + " " + parseInt(y_m_d.split("月")[1].split("日")[0]);
+        dead_line_time += " " + parseInt( h_m_s.split(":")[0]) + " " + parseInt(h_m_s.split(":")[1]) + " 59";
+        var usermail = user.split("(")[1].split(")")[0];
+
+        var data = {
+            "name": name,
+            "explain": explain,
+            "priority": priority,
+            "dead_line_time": dead_line_time,
+            "usermail": usermail,
+            "weight": weight
+        };
+        console.log(data);
+        $.ajax({
+            type: 'POST',
+            data: data,
+            dataType: 'text',
+            success: function(res) {
+                console.log(res);
+                if (res == "Success"){
+                    location.reload();
+                }else{
+                    alert(res);
+                }
+            },
+            error: function(res) {
+                console.log("Error");
+                alert(res);
+            },
+            complete: function() {
+                console.log("Complete");
+            }
+        })
+    }
+}
+
+function updateTaskSet(){
+    var member_task_summary_time = $("#datetimepicker10").val();
+    var team_task_summary_time = $("#datetimepicker11").val();
+    $.ajax({
+        type: 'PUT',
+        data: {
+            "member_task_summary_time": member_task_summary_time,
+            "team_task_summary_time": team_task_summary_time
+        },
+        dataType: 'text',
+        success: function(res) {
+            console.log(res);
+            if (res == "Success"){
+                location.reload();
+            }else{
+                alert(res);
+            }
+        },
+        error: function(res) {
+            console.log("Error");
+            alert(res);
+        },
+        complete: function() {
+            console.log("Complete");
+    }
+});
+}
+
+function select_member_task_filter(ts, id){
+    if(id=="all")
+    {
+        $(".member_filter_class").show();
+    }
+    else{
+        var class_str = "member_filter_class_" + id;
+        var name = $(ts).html();
+        console.log(name);
+        console.log(class_str)
+        $(".member_filter_class").hide();
+        $("." + class_str).show();
+    }
+}
+
+function update_task(id){
+    var taskid = id;
+    var name = $.trim($("#update_task_name_" + id).val());
+    var username_email = $.trim($("#update_task_username_" + id).html());
+    var dead_line_time_ch = $.trim($("#update_task_dead_line_" + id).val()) + " 23:59";
+    var explain = $.trim($("#update_task_explain_" + id).val());
+    var remarks = $.trim($("#update_task_remarks_" + id).val());
+    var priority = $.trim($("#update_task_priority_" + id).find('li.cur a').html());
+    var status = $.trim($("#update_task_status_" + id).html());
+    var done_100 = $.trim($("#update_task_done_100_" + id).html());
+
+    var weight = $.trim($("#update_task_weight_" + id).html());
+    var score = $.trim($("#update_task_score_" + id).html());
+    var real_time_ch = $.trim($("#real_time_start_done_" + id).val()) + " 00:00";
+
+    done_100 = parseInt(done_100.split("%")[0]);
+
+    if(status == "未开始"){
+        status = 0;
+        done_100 = 0;
+    }else if(status == "进行中"){
+        status = 1;
+    }else if(status == "已完成"){
+        status = 2;
+        done_100 = 100;
+    }else if(status == "延后"){
+        status = 3;
+        done_100 = 0;
+    }else{
+        status = 0;
+    }    
+
+    if(priority=="紧急"){
+        priority = 0;
+    }else if(priority=="高"){
+        priority = 1;
+    }else if(priority=="中"){
+        priority = 2;
+    }else if(priority=="低"){
+        priority = 3;
+    }else {
+        priority = 7;
+    }
+
+    var y_m_d = dead_line_time_ch.split(" ")[0];
+    var h_m_s = dead_line_time_ch.split(" ")[1];
+
+    var flag = checkout_add_task(name,explain,username_email,y_m_d,h_m_s,priority);
+
+    if (flag){
+        var dead_line_time =  parseInt(y_m_d.split("年")[0]) + " " + parseInt(y_m_d.split("年")[1].split("月")[0]) + " " + parseInt(y_m_d.split("月")[1].split("日")[0]);
+        dead_line_time += " " + parseInt( h_m_s.split(":")[0]) + " " + parseInt(h_m_s.split(":")[1]) + " 0";
+    }
+
+    var y_m_d = real_time_ch.split(" ")[0];
+    var h_m_s = real_time_ch.split(" ")[1];
+
+    var real_time =  parseInt(y_m_d.split("年")[0]) + " " + parseInt(y_m_d.split("年")[1].split("月")[0]) + " " + parseInt(y_m_d.split("月")[1].split("日")[0]);
+    real_time += " " + parseInt( h_m_s.split(":")[0]) + " " + parseInt(h_m_s.split(":")[1]) + " 0";
+
+    if (flag){
+        var useremail = username_email.split("(")[1].split(")")[0];
+        var username = username_email.split("(")[0];
+
+        var data = {
+            "taskid": taskid,
+            "name": name,
+            "explain": explain,
+            "priority": priority,
+            "dead_line_time": dead_line_time,
+            "taskid": taskid,
+            "remarks": remarks,
+            "status": status,
+            "done_100": done_100,
+            "username": username,
+            "useremail": useremail,
+            "real_time":real_time,
+            "weight":weight,
+            "score": score
+        }
+        console.log(data);
+        $.ajax({
+            type: 'PATCH',
+            data: data,
+            dataType: 'text',
+            success: function(res) {
+                console.log(res);
+                if (res == "Success"){
+                    alert("Success");
+                    location.reload();
+                }else{
+                    alert(res);
+                }
+            },
+            error: function(res) {
+                console.log("Error");
+                alert(res);
+            },
+            complete: function() {
+                console.log("Complete");
+            }
+        });
+    }        
+}
+
+function delete_task(id){
+    var data = {
+        "taskid": id
+    }
+    console.log(data);
+    $.ajax({
+        type: 'DELETE',
+        data: data,
+        dataType: 'text',
+        success: function(res) {
+            console.log(res);
+            if (res == "Success"){
+                alert("Success");
+                location.reload();
+            }else{
+                alert(res);
+            }
+        },
+        error: function(res) {
+            console.log("Error");
+            alert(res);
+        },
+        complete: function() {
+            console.log("Complete");
+        }
+    });
+}
+
+</script>
+
+{% end %}

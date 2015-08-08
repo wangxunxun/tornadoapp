@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>博彦科技工作汇报系统</title>
+<link href="/static/css/css.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/datetimepicker.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/static/js/utils.js"></script>
+<script type="text/javascript" src="/static/js/base.js"></script>
+<script type="text/javascript" src="/static/js/datetimepicker.js"></script>
+</head>
+
+<body class="wrap noteam">
+    <div class="content noteam">
+        <div class="user">
+            <em><img src="/static/images/photo.jpg"></em>
+            <span>{{username}}</span>
+            <div class="exit">退出登录</div>
+        </div>
+        
+        <div class="text">
+            您当前没有Team，立即新建开始使用吧！
+        </div>
+        <div class="btn"><a class="newteam" href="#">新建Team</a></div>
+    </div>
+</div>
+
+
+<!--新建team-基本信息-->
+<div class="modpop build1">
+    <div class="title">
+        <h3>新建team-基本信息</h3>
+        <span><img src="/static/images/close.gif" title="关闭"></span>
+    </div>
+    <div class="cont">
+        <dl class="timename" style=" min-height:300px">
+            <dt><span>team名称：</span></dt>
+            <dd>
+                <input name="" type="text" value="teamname" id="new_teamname"/>
+            </dd>
+        </dl>
+        <div class="btn"><a class="modbtn1 buildbtn2" href="javascript:;">下一步</a></div>
+    </div>
+</div>
+
+<!--新建team-团队成员-->
+<div class="modpop build2">
+    <div class="title">
+        <h3>新建team-团队成员</h3>
+        <span><img src="/static/images/close.gif" title="关闭"></span>
+    </div>
+    <div class="cont">
+        <dl class="addsub" id="members">
+            <dt><span>team成员</span><em><img src="/static/images/add.png" title="添加"></em></dt>
+            <dd>
+                <span>角色</span>
+                <div class="select">
+                    <p class='add_role'>组员</p>
+                    <ul>
+                        <li><a href="javascript:;">组员</a></li>
+                        <li><a href="javascript:;">观察者</a></li>
+                    </ul>
+                </div>
+                <span>邮箱</span><input name="" type="text" class="addsub_email" />
+                <span>姓名</span><input name="" type="text" class="addsub_username"/>
+                <em><img src="/static/images/minus.png" title="删除"></em>
+            </dd>
+        </dl>
+        <div class="btn"><a class="modbtn1 buildbtn1" href="javascript:;">上一步</a><a class="modbtn1 buildbtn3" href="javascript:;">下一步</a></div>
+    </div>
+</div>
+
+<!--新建team-日报周报设置-->
+<div class="modpop build3">
+    <div class="title">
+        <h3>新建team-日报周报设置</h3>
+        <span><img src="/static/images/close.gif" title="关闭"></span>
+    </div>
+    <div class="cont">
+        <dl class="type">
+            <dt><span>报告类型：</span></dt>
+            <dd>
+                 <ul id="new_day_or_week_ul">
+                    <li class="cur">日报</li>
+                    <li>周报</li>
+                </ul>
+            </dd>
+        </dl>
+        <div class="day">
+            <dl class="timeset">
+              <dt><span>每天提交时间：</span></dt>
+                <dd>
+                    <input name="" type="text"  id="datetimepicker1" value="08:30"/>
+                </dd>
+            </dl>
+            <dl class="weektips">
+                <dt><span>提醒周期：</span></dt>
+                <dd>
+                     <ul id="new_team_day_remind_interval">
+                        <li class="cur cur_class_change">15分钟</li>
+                        <li class="cur_class_change">30分钟</li>
+                        <li class="cur_class_change">45分钟</li>
+                        <li class="cur_class_change">1小时</li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl class="timeset">
+                <dt><span>汇总日报发布时间：</span></dt>
+                <dd>
+                    <input name="" type="text"  id="datetimepicker3" value="18:15" />
+                </dd>
+            </dl>
+        </div>
+        <div class="week">
+            <dl class="reminder">
+                <dt><span>提醒时间：</span></dt>
+                <dd class="fix"> 
+                    <div class="select">
+                        <p id="new_team_week_week_create_time">周一</p>
+                        <ul>
+                            <li><a href="javascript:;">周一</a></li>
+                            <li><a href="javascript:;">周二</a></li>
+                            <li><a href="javascript:;">周三</a></li>
+                            <li><a href="javascript:;">周四</a></li>
+                            <li><a href="javascript:;">周五</a></li>
+                            <li><a href="javascript:;">周六</a></li>
+                            <li><a href="javascript:;">周日</a></li>
+                        </ul>
+                    </div>
+                    <div class="txt"><input name="" type="text" id="datetimepicker4" value="08:30"/></div>
+                </dd>
+            </dl>
+            <dl class="weektips">
+                <dt><span>提醒周期：</span></dt>
+                <dd>
+                     <ul id="new_team_week_remind_interval">
+                        <li class="cur cur_class_change">15分钟</li>
+                        <li class="cur_class_change">30分钟</li>
+                        <li class="cur_class_change">45分钟</li>
+                        <li class="cur_class_change">1小时</li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl class="reminder">
+                <dt><span>汇总周报发布时间：</span></dt>
+                <dd class="fix"> 
+                    <div class="select">
+                        <p id="new_team_week_week_summary_time">周五</p>
+                        <ul>
+                            <li><a href="javascript:;">周一</a></li>
+                            <li><a href="javascript:;">周二</a></li>
+                            <li><a href="javascript:;">周三</a></li>
+                            <li><a href="javascript:;">周四</a></li>
+                            <li><a href="javascript:;">周五</a></li>
+                            <li><a href="javascript:;">周六</a></li>
+                            <li><a href="javascript:;">周日</a></li>
+                        </ul>
+                    </div>
+                    <div class="txt"><input name="" type="text" id="datetimepicker5" value="20:00"/></div>
+                </dd>
+            </dl>
+        </div>
+        <div class="btn"><a class="modbtn1 buildbtn2" href="javascript:;">上一步</a><a class="modbtn1 buildbtn4" href="javascript:;">下一步</a></div>
+    </div>
+</div>
+
+<!--新建team-任务设置-->
+<div class="modpop build4">
+    <div class="title">
+        <h3>新建team-任务设置</h3>
+        <span><img src="/static/images/close.gif" title="关闭"></span>
+    </div>
+    <div class="cont">
+        <dl class="timeset">
+          <dt><span>个人任务汇总发布时间：</span></dt>
+            <dd>
+                <input name="" type="text" id="datetimepicker6" value="17:30"/>
+            </dd>
+        </dl>
+        <dl class="timeset" style="height:200px;">
+          <dt><span>团队任务汇总发布时间：</span></dt>
+            <dd>
+                <input name="" type="text" id="datetimepicker7" value="18:20"/>
+            </dd>
+        </dl>
+        <div class="btn"><a class="modbtn1 buildbtn3" href="javascript:;">上一步</a><a class="modbtn1" href="javascript:;" onclick="postNewTeam()">完成</a></div>
+    </div>
+</div>
+
+<!--遮罩层-->
+<div class="popbg"></div>
+</body>
+</html>

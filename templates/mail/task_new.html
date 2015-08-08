@@ -1,0 +1,18 @@
+<h4>Hello {{data['username']}},</h4>
+
+<p><strong>{{data['createUsername']}}({{data['teamname']}}小组)</strong> 于{{data['now']}}为您创建了一个任务.</p>
+
+<p>任务详情：</p>
+
+<p>任务名称：<em>{{data['name']}}</em></p>
+<p>任务等级：<em><strong>{{data['priority']}}</strong></em></p>
+<p>任务预计完成时间：<em>{{data['dead_line_time']}}</em></p>
+
+<p>任务详情：</p>
+<hr> 
+<pre>{{data['explain']}}</pre>
+<hr> 
+
+<p>任务详细查看更新地址: <a href="{{ data['url']}}">点我</a></p>
+
+谢谢

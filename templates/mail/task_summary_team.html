@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>博彦科技工作汇报系统</title>
+<link href="/static/css/css.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/static/js/base.js"></script>
+</head>
+<body>
+<div class="header">
+    <div class="userinfo">
+        <em><img src="/static/images/photo.jpg"></em>
+        <span>{{data['teamname']}}</span>
+    </div>
+    <div class="logo"><img src="/static/images/logo2.gif"></div>
+</div>
+<div class="summary alljob">
+    <div class="time"><span>{{ data['now_date_str'][0] }}</span>{{ data['now_date_str'][1] }}</div>
+    <h2>{{ data['now_date_str'][0] }} 任务汇总</h2>
+    {%for u in data['userTaskList']%}
+    <div class="tit">{{u['username']}}</div>
+    <div class="cont">
+        {%for t in u['tasks']%}
+        <dl>
+            <dt>
+                {{t['name']}}
+                {% if t['status'] == 0 %}
+                <div class="prompt"><span class="nostart">未开始</span></div>
+                {% elif t['status'] == 1 %}
+                <div class="prompt"><span class="doing">进行中</span></div>
+                {% elif t['status'] == 3 %}
+                <div class="prompt"><span class="delay">延后</span></div>
+                {% else %}
+                <div class="prompt"><span class="nostart">未开始</span></div>
+                {%end%}
+            </dt>
+            <dd>
+                <ul>
+                    <li>
+                        <div class="job">
+                            <div class="txt">
+                                <div class="info">
+                                    <span>{{t['pubusername']}}<em>指派</em>{{u['username']}}</span>
+                                    <span><em>完成时间：</em>{{t['dead_line_time'][0]}}　{{t['dead_line_time'][1]}}</span>
+                                </div>
+                                <h3>任务详情</h3>
+                                <pre>{{t['explain']}}</pre>
+                                {%if t['remarks'] != ""%}
+                                <h3>备注</h3>
+                                <pre>{{t['remarks']}}</pre>
+                                {%end%}
+                                {%if 'rfs' in t and 'problem' in t['rfs'] != ""%}
+                                <h3>遇到的问题</h3>
+                                <pre>{{t['rfs']['problem']}}</pre>
+                                {%end%}
+                                <a href='/edit/task/{{t["id"]}}' target='_blank'><h3>编辑</h3></a>
+                            </div>
+                            <div class="drap"><em></em></div>
+                        </div> 
+                    </li>
+                </ul>
+            </dd>
+        </dl>
+        {%end%}
+    </div>
+    {%end%}
+</div>
+</body>
+</html>

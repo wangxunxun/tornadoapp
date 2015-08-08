@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>博彦科技工作汇报系统</title>
+<link href="/static/css/css.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/static/js/base.js"></script>
+</head>
+
+<body>
+<div class="header">
+    <div class="userinfo">
+    	<em><img src="/static/images/photo.jpg"></em>
+        <span>{{ owner }}</span>
+    </div>
+    <div class="logo"><img src="/static/images/logo2.gif"></div>
+</div>
+<div class="summary">
+	<div class="time"><span>{{ date }}</span></div>
+    <h2>{{ date }}汇总日报</h2>
+    <div class="cont">
+        {% for d in details %}
+    	<dl>
+        	<dt>{{ d[0] }}</dt>
+            <dd>
+            	<ul>
+                    {% for dd in d[1] %}
+                	<li>
+                    	<div class="week">{{dd[1]}}</div>
+                        <div class="depict">
+                        	<div class="txt">
+                                {% if dd[0]['status'] == 2 %}
+                                <h3>工作总结</h3>
+                                <pre>{{ dd[0]['submit_list'][-1]['pre'][0]['text'] }}</pre>
+                                <h3>工作计划</h3>
+                                <pre>{{ dd[0]['submit_list'][-1]['next'][0]['text'] }}</pre>
+                                {% if "problem" in  dd[0]['submit_list'][-1] %}
+                                <h3>遇到的问题</h3>
+                                <pre>{{ dd[0]['submit_list'][-1]['problem'][0]['text'] }}</pre>
+                                {% end %}
+
+                                {% elif dd[0]['status'] == 0 %}
+                                <h3 style='color:red'>未提交</h3>
+                                {% elif dd[0]['status'] == 1 %}
+                                <h3 style='color:red'>已提醒</h3>
+                                {% elif dd[0]['status'] == 3 %}
+                                <h3 style='color:red'>已请假</h3>
+                                {% else %}
+                                <h3 style='color:red'>见鬼了</h3>
+                                {% end %}
+                            </div>
+                            <div class="drap"><em></em></div>
+                        </div>
+                    </li>
+                    {% end %}
+                </ul>
+            </dd>
+        </dl>
+        {% end %}
+    </div>
+</div>
+</body>
+</html>

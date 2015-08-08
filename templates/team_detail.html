@@ -1,0 +1,417 @@
+
+{% extends "team_x.html" %}
+{% block body %}
+    <div class="mod">
+        <div class="title">
+            {% if thisteam['day_or_week'] == 0 %}
+            <h3>日报</h3>
+            {% else %}
+            <h3>周报</h3>
+            {% end %}
+            <div class="set"><img src="/static/images/set.gif" title="设置组"></div>
+        </div>
+        
+        <div class="cont">
+            <dl>
+                    <dt><span> 汇总 </span></dt>
+                    {% if thisteam['day_or_week'] == 0 %}
+                        <dd class="report">
+                        <a href="/team/summary/day/{{ str(thisteam['_id']) }}">
+                            <h3> 本周日报汇总 </h3>
+                            <b><img src="/static/images/cometo.gif" title="稍后实现"></b>
+                        </a>
+                    </dd>
+                    {% else %}
+                    <dd class="report">
+                        <a href="/team/summary/week/{{ str(thisteam['_id']) }}">
+                            <h3> 本周周报汇总 </h3>
+                            <b><img src="/static/images/cometo.gif" title="稍后实现"></b>
+                        </a>
+                    </dd>
+                    {% end %}                    
+                </dl>
+            {% if thisteam['day_or_week'] == 0 %}
+                {% for day in main['day_historys'] %}
+                <div>
+                    <dl>
+                        <dt><span>{{ day['date'].split('-')[0] }}年 第{{ day['date'].split('-')[1] }}周  周{% if day['date'].split('-')[2] == '1' %}一{% elif day['date'].split('-')[2] == '2' %}二{% elif day['date'].split('-')[2] == '3' %}三{% elif day['date'].split('-')[2] == '4' %}四{% elif day['date'].split('-')[2] == '5' %}五{% elif day['date'].split('-')[2] == '6' %}六{% elif day['date'].split('-')[2] == '7' %}日{% end %}</span></dt>
+                    </dl>
+                    <dl>
+                        {% for detail in day['details'] %}
+                            {% if detail['status'] == 0 %}
+                            <dd class="donot">
+                                <h3>{{ detail['username'] }}</h3>
+                                <div class="state" onclick="set_detail_status_day(this,'{{ str(detail['id']) }}')">
+                                    <span id="detailStatus" class="red">未提交</span>
+                                    <em><img src="/static/images/tips.gif" title="设置状态"></em>
+                                </div>
+                            </dd>
+                            {% elif detail['status'] == 1 %}
+                            <dd class="donot">
+                                <h3>{{ detail['username'] }}</h3>
+                                <div class="state" onclick="set_detail_status_day(this,'{{ str(detail['id']) }}')">
+                                    <span id="detailStatus" class="blue">已提醒</span>
+                                    <em><img src="/static/images/tips.gif" title="设置状态"></em>
+                                </div>
+                            </dd>                   
+                            {% elif detail['status'] == 3 %}
+                            <dd class="donot">
+                            <h3>{{ detail['username'] }}</h3>
+                                <div class="state" onclick="set_detail_status_day(this,'{{ str(detail['id']) }}')">
+                                    <span id="detailStatus" class="green">已请假</span>
+                                    <em><img src="/static/images/tips.gif" title="设置状态"></em>
+                                </div>
+                            </dd>                       
+                            {% elif detail['status'] == 2 %}
+                            <dd class="doyes {{ detail['id'] }}">
+                                <h3>{{ detail['username'] }}</h3>
+                                <p>{{ detail['submit_list'][-1]['pre'][0]['text'] }}</p>
+                                <b><img src="/static/images/cometo.gif" title="查看详细"></b>
+                            </dd>
+                            {% end %}
+                        {% end %}
+                    </dl>
+                </div>
+                {% end %}
+            {% else %}
+            <div>
+                <dl>
+                    <dt><span>{{ main['week_historys']['date'].split('-')[0] }}年 第{{ main['week_historys']['date'].split('-')[1] }}周</span></dt>
+                </dl>
+               {% for d in main['week_historys']['details'] %}
+
+                    <dl>
+                        {% if d['status'] == 0 %}
+                        <dd class="donot">
+                            <h3>{{ d['username'] }}</h3>
+                            <div class="state" onclick="set_detail_status_week(this,'{{ str(d['id']) }}')">
+                                <span id="detailStatus" class="red">未提交</span>
+                                <em><img src="/static/images/tips.gif" title="设置状态"></em>
+                            </div>
+                        </dd>
+                        {% elif d['status'] == 1 %}
+                        <dd class="donot">
+                            <h3>{{ d['username'] }}</h3>
+                            <div class="state" onclick="set_detail_status_week(this,'{{ str(d['id']) }}')">
+                                <span id="detailStatus" class="blue">已提醒</span>
+                                <em><img src="/static/images/tips.gif" title="设置状态"></em>
+                            </div>
+                        </dd>                   
+                        {% elif d['status'] == 3 %}
+                        <dd class="donot">
+                        <h3>{{ d['username'] }}</h3>
+                            <div class="state" onclick="set_detail_status_week(this,'{{ str(d['id']) }}')">
+                                <span id="detailStatus" class="green">已请假</span>
+                                <em><img src="/static/images/tips.gif" title="设置状态"></em>
+                            </div>
+                        </dd>                       
+                        {% elif d['status'] == 2 %}
+                        <dd class="doyes {{ d['id'] }}">
+                            <h3>{{ d['username'] }}</h3>
+                            <p>{{ d['submit_list'][-1]['pre'][0]['text'] }}</p>
+                            <b><img src="/static/images/cometo.gif" title="查看详细"></b>
+                        </dd>
+                        {% end %}
+                    </dl>
+                
+                {% end %}
+                </div>
+            {% end %}
+        </div>
+    </div>
+
+{% if thisteam['day_or_week'] == 0 %}
+{% for day in main['day_historys'] %}
+{% for detail in day['details'] %}
+{% if detail['status'] == 2 %}
+<div class="detail pop{{ detail['id'] }}">
+    <div class="title">
+        <h3>{{ detail['username'] }}</h3>
+        <span><img src="/static/images/close.gif" title="关闭"></span>
+    </div>
+    <div class="time"><span>{{ day['date'] }}</span></div>
+    <div class="cont">
+        <h3>工作总结</h3>
+        <div class="txt">
+            <pre>{{ detail['submit_list'][-1]['pre'][0]['text'] }}</pre>
+        </div>
+        <h3>工作计划</h3>
+        <div class="txt">
+            <pre>{{ detail['submit_list'][-1]['next'][0]['text'] }}</pre>
+        </div>
+        <h3>遇到的问题</h3>
+        <div class="txt">
+            {% if 'problem' in detail['submit_list'][-1] %}
+            <pre>{{ detail['submit_list'][-1]['problem'][0]['text'] }}</pre>
+            {% else %}
+            <span>无</span>
+            {% end %}
+        </div>
+    </div>
+</div>
+{% end %}
+{% end %}
+{% end %}
+{% else %}
+
+{% for detail in main['week_historys']['details'] %}
+{% if detail['status'] == 2 %}
+<div class="detail pop{{ detail['id'] }}">
+    <div class="title">
+        <h3>{{ detail['username'] }}</h3>
+        <span><img src="/static/images/close.gif" title="关闭"></span>
+    </div>
+    <div class="time"><span> {{ main['week_historys']['date'].split('-')[0] }}年 第{{ main['week_historys']['date'].split('-')[1] }}周 </span></div>
+    <div class="cont">
+        <h3>工作总结</h3>
+        <div class="txt">
+            <pre>{{ detail['submit_list'][-1]['pre'][0]['text'] }}</pre>
+        </div>
+        <h3>工作计划</h3>
+        <div class="txt">
+            <pre>{{ detail['submit_list'][-1]['next'][0]['text'] }}</pre>
+        </div>
+    </div>
+</div>
+{% end %}
+{% end %}
+{% end %}
+
+<!--当前team做日周报设置管理-->
+<div class="modpop setteam">
+    <div class="title">
+        <h3>日周报设置</h3>
+        <span><img src="/static/images/close.gif" title="关闭"></span>
+    </div>
+    <div class="cont">
+        <dl class="type">
+            <dt><span>报告类型：</span></dt>
+            <dd>
+                 <ul id="update_day_or_week_ul">
+                    <li class="cur">日报</li>
+                    <li id="if_week_click_it">周报</li>
+                </ul>
+            </dd>
+        </dl>
+        <div class="day">
+            <dl class="timeset">
+              <dt><span>每天创建时间：</span></dt>
+                <dd>
+                    <input name="" type="text" id="datetimepicker8" value="{{ thisteam['day_detail_create_time'] }}"/>
+                </dd>
+            </dl>
+            <dl class="weektips">
+                <dt><span>提醒周期：</span></dt>
+                <dd>
+                     <ul id="update_team_day_remind_interval">
+                        {% if thisteam['day_detail_remind_interval'] == 15 %}
+                        <li class="cur cur_class_change">15分钟</li>
+                        <li class="cur_class_change">30分钟</li>
+                        <li class="cur_class_change">45分钟</li>
+                        <li class="cur_class_change">1小时</li>
+                        {% elif thisteam['day_detail_remind_interval'] == 30 %}
+                        <li class="cur_class_change">15分钟</li>
+                        <li class="cur cur_class_change">30分钟</li>
+                        <li class="cur_class_change">45分钟</li>
+                        <li class="cur_class_change">1小时</li>
+                        {% elif thisteam['day_detail_remind_interval'] == 45 %}
+                        <li class="cur_class_change">15分钟</li>
+                        <li class="cur_class_change">30分钟</li>
+                        <li class="cur cur_class_change">45分钟</li>
+                        <li class="cur_class_change">1小时</li>
+                        {% elif thisteam['day_detail_remind_interval'] == 60 %}
+                        <li class="cur_class_change">15分钟</li>
+                        <li class="cur_class_change">30分钟</li>
+                        <li class="cur_class_change">45分钟</li>
+                        <li class="cur cur_class_change">1小时</li>
+                        {% end %}
+                    </ul>
+                </dd>
+            </dl>
+            <dl class="timeset">
+                <dt><span>汇总日报发布时间：</span></dt>
+                <dd>
+                    <input name="" type="text"  id="datetimepicker99" value="{{ thisteam['day_detail_summary_time'] }}" />
+                </dd>
+            </dl>
+        </div>
+        <div class="week">
+            <dl class="reminder">
+                <dt><span>创建时间：</span></dt>
+                <dd class="fix"> 
+                    <div class="select">
+                        {% if thisteam["week_detail_create_time"].split("-")[0] == "1" %}
+                        <p id="update_team_week_week_create_time">周一</p>
+                        {% elif thisteam["week_detail_create_time"].split("-")[0] == "2" %}
+                        <p id="update_team_week_week_create_time">周二</p>
+                        {% elif thisteam["week_detail_create_time"].split("-")[0] == "3" %}
+                        <p id="update_team_week_week_create_time">周三</p>
+                        {% elif thisteam["week_detail_create_time"].split("-")[0] == "4" %}
+                        <p id="update_team_week_week_create_time">周四</p>
+                        {% elif thisteam["week_detail_create_time"].split("-")[0] == "5" %}
+                        <p id="update_team_week_week_create_time">周五</p>
+                        {% elif thisteam["week_detail_create_time"].split("-")[0] == "6" %}
+                        <p id="update_team_week_week_create_time">周六</p>
+                        {% elif thisteam["week_detail_create_time"].split("-")[0] == "7" %}
+                        <p id="update_team_week_week_create_time">周日</p>
+                        {% end %}
+                        <ul>
+                            <li><a href="javascript:;">周一</a></li>
+                            <li><a href="javascript:;">周二</a></li>
+                            <li><a href="javascript:;">周三</a></li>
+                            <li><a href="javascript:;">周四</a></li>
+                            <li><a href="javascript:;">周五</a></li>
+                            <li><a href="javascript:;">周六</a></li>
+                            <li><a href="javascript:;">周日</a></li>
+                        </ul>
+                    </div>
+                    <div class="txt"><input name="" type="text" id="datetimepicker10" value="{{ thisteam['week_detail_create_time'].split('-')[1] }}" /></div>
+                </dd>
+            </dl>
+            <dl class="weektips">
+                <dt><span>提醒周期：</span></dt>
+                <dd>
+                     <ul id="update_team_week_remind_interval">
+                        {% if thisteam['week_detail_remind_interval'] == 15 %}
+                        <li class="cur cur_class_change">15分钟</li>
+                        <li class="cur_class_change">30分钟</li>
+                        <li class="cur_class_change">45分钟</li>
+                        <li class="cur_class_change">1小时</li>
+                        {% elif thisteam['week_detail_remind_interval'] == 30 %}
+                        <li class="cur_class_change">15分钟</li>
+                        <li class="cur cur_class_change">30分钟</li>
+                        <li class="cur_class_change">45分钟</li>
+                        <li class="cur_class_change">1小时</li>
+                        {% elif thisteam['week_detail_remind_interval'] == 45 %}
+                        <li class="cur_class_change">15分钟</li>
+                        <li class="cur_class_change">30分钟</li>
+                        <li class="cur cur_class_change">45分钟</li>
+                        <li class="cur_class_change">1小时</li>
+                        {% elif thisteam['week_detail_remind_interval'] == 60 %}
+                        <li class="cur_class_change">15分钟</li>
+                        <li class="cur_class_change">30分钟</li>
+                        <li class="cur_class_change">45分钟</li>
+                        <li class="cur cur_class_change">1小时</li>
+                        {% end %}
+                    </ul>
+                </dd>
+            </dl>
+            <dl class="reminder">
+                <dt><span>汇总周报发布时间：</span></dt>
+                <dd class="fix"> 
+                    <div class="select">
+                        {% if thisteam["week_detail_summary_time"].split("-")[0] == "1" %}
+                        <p id="update_team_week_week_summary_time">周一</p>
+                        {% elif thisteam["week_detail_summary_time"].split("-")[0] == "2" %}
+                        <p id="update_team_week_week_summary_time">周二</p>
+                        {% elif thisteam["week_detail_summary_time"].split("-")[0] == "3" %}
+                        <p id="update_team_week_week_summary_time">周三</p>
+                        {% elif thisteam["week_detail_summary_time"].split("-")[0] == "4" %}
+                        <p id="update_team_week_week_summary_time">周四</p>
+                        {% elif thisteam["week_detail_summary_time"].split("-")[0] == "5" %}
+                        <p id="update_team_week_week_summary_time">周五</p>
+                        {% elif thisteam["week_detail_summary_time"].split("-")[0] == "6" %}
+                        <p id="update_team_week_week_summary_time">周六</p>
+                        {% elif thisteam["week_detail_summary_time"].split("-")[0] == "7" %}
+                        <p id="update_team_week_week_summary_time">周日</p>
+                        {% end %}
+                        <ul>
+                            <li><a href="javascript:;">周一</a></li>
+                            <li><a href="javascript:;">周二</a></li>
+                            <li><a href="javascript:;">周三</a></li>
+                            <li><a href="javascript:;">周四</a></li>
+                            <li><a href="javascript:;">周五</a></li>
+                            <li><a href="javascript:;">周六</a></li>
+                            <li><a href="javascript:;">周日</a></li>
+                        </ul>
+                    </div>
+                    <div class="txt"><input name="" type="text" id="datetimepicker12" value="{{ thisteam['week_detail_summary_time'].split('-')[1] }}" /></div>
+                </dd>
+            </dl>
+        </div>
+        <div class="btn"><a class="modbtn1" href="#" onclick="updateTeam()">确　定</a></div>
+    </div>
+</div>
+
+{% end %}
+
+{% block script %}
+<script>
+$(function(){
+{% if thisteam['day_or_week'] == 0 %}
+{% for day in main['day_historys'] %}
+    {% for detail in day['details'] %}
+        {% if detail['status'] == 2 %}
+            $(".pop{{ detail['id'] }}").popBox({
+                    oPop:"detail",
+                    oTitMove:".title",
+                    oClose:"span",
+                    oBtn:".{{ detail['id'] }}",
+                    giveup:{onoff:true},
+                    detail:{onoff:true}
+                });
+        {% end %}
+    {% end %}
+{% end %}
+{% else %}
+{% for detail in main['week_historys']['details'] %}
+    {% if detail['status'] == 2 %}
+        $(".pop{{ detail['id'] }}").popBox({
+                oPop:"detail",
+                oTitMove:".title",
+                oClose:"span",
+                oBtn:".{{ detail['id'] }}",
+                giveup:{onoff:true},
+                detail:{onoff:true}
+            });
+    {% end %}
+{% end %}
+{% end %}
+
+
+})
+$(function(){
+    $('#datetimepicker8').datetimepicker({
+        datepicker:false,
+        format:'H:i',
+        step:5
+    });
+
+    $('#datetimepicker3').datetimepicker({
+        datepicker:false,
+        format:'H:i',
+        step:5
+    });
+
+    $('#datetimepicker99').datetimepicker({
+        datepicker:false,
+        format:'H:i',
+        step:5
+    });
+
+    $('#datetimepicker9').datetimepicker({
+        datepicker:false,
+        format:'H:i',
+        step:5
+    });
+
+    $('#datetimepicker10').datetimepicker({
+        datepicker:false,
+        format:'H:i',
+        step:5
+    });
+
+    $('#datetimepicker11').datetimepicker({
+        datepicker:false,
+        format:'H:i',
+        step:5
+    });
+
+    $('#datetimepicker12').datetimepicker({
+        datepicker:false,
+        format:'H:i',
+        step:5
+    });
+})
+</script>
+{% end %}

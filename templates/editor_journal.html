@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>博彦科技工作汇报系统</title>
+<link href="/static/css/css.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/static/js/base.js"></script>
+<script type="text/javascript">
+    
+function check (argument) {
+    var pre_text = $.trim($("#pre_text").val());
+    var next_text = $.trim($("#next_text").val());
+    var expend_time = $.trim($("#expend_time").val());
+    if(pre_text.length == 0 ){
+        alert("请填写今日总结");
+        return false;
+    }
+    if(next_text.length == 0 ){
+        alert("请填写明日计划");
+        return false;
+    }
+    if(expend_time < 0 || expend_time > 8){
+        alert("请正确填写时间（0-8）");
+        return false;
+    }
+    $("#expend_time").val(parseInt(expend_time));
+    return true;
+}
+
+</script>
+</head>
+
+<body>
+<div class="header">
+    <div class="userinfo">
+    	<em><img src="/static/images/photo.jpg"></em>
+        <span>{{ detail['username'] }}</span>
+    </div>
+    <div class="logo"><img src="/static/images/logo2.gif"></div>
+</div>
+<div class="editor">
+	<div class="time"><span>{{ detail['format_date'] }}</span>{{ detail['format_week'] }}</div>
+    <form method="post" onsubmit="return check()">
+    {% if detail['status'] != 2 %}
+        <dl>            
+        	<dt>今日总结</dt>            
+            <dd><textarea name="pre_text" id="pre_text" cols="" rows="" class="">请对今日工作事项做总结描述</textarea></dd>
+        </dl>
+        <dl>
+            <dt>明日计划</dt>
+            <dd><textarea name="next_text" id="next_text" cols="" rows="" class="">请对明日工作计划做具体描述</textarea></dd>
+        </dl>
+        <dl>
+            <dt>遇到的问题</dt>
+            <dd><textarea name="problem_text" id="problem_text" cols="" rows="" class="">今天遇到的问题做具体描述</textarea></dd>
+        </dl>
+    {% else %}
+        <dl>
+            <dt>今日总结 <em style='color:red'>（已提交）</em></dt>   
+            <dd><textarea name="pre_text" id="pre_text" cols="" rows="" class="yet">{{ detail['submit_list'][-1]['pre'][0]['text'] }}</textarea></dd>
+        </dl>
+        <dl>
+            <dt>明日计划 <em style='color:red'>（已提交）</em></dt>
+            <dd><textarea name="next_text" id="next_text" cols="" rows="" class="yet">{{ detail['submit_list'][-1]['next'][0]['text'] }}</textarea></dd>
+        </dl>
+        <dl>
+            <dt>遇到的问题</dt>
+            {% if 'problem' in detail['submit_list'][-1] %}
+            <dd><textarea name="problem_text" id="problem_text" cols="" rows="" class="yet">{{ detail['submit_list'][-1]['problem'][0]['text'] }}</textarea></dd>
+            {% else %}
+            <dd><textarea name="problem_text" id="problem_text" cols="" rows="" class="">今天遇到的问题做具体描述</textarea></dd>
+            {% end %}
+        </dl>
+    {% end %}
+    <br>
+        <div class="o">本项目今日耗时（单位：小时）:<input type="text" class="yet" name="expend_time" id="expend_time" value="{{ detail['expend_time'] }}" /></div>
+
+        <div class="btn"><input type="submit" class="modbtn1" value="提　交" /></div>
+    </form>
+</div>
+</body>
+</html>

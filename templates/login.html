@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>博彦科技工作汇报系统</title>
+<link href="static/css/css.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/static/js/base.js"></script>
+</head>
+
+<body style="background:#f8f9fb;">
+<div class="login">
+    <h3><img src="static/images/logo1.gif" alt="博彦科技工作汇报系统"></h3>
+    <form method="post" onsubmit="return true"  action="/login">
+        <ul class="fix">
+            <li><span>邮　箱</span><input name="email" type="text" value="请输入注册邮箱" /></li>
+            <li><span>密　码</span><input name="password" type="password" value="请输入登陆密码" /></li>
+        </ul>
+        <div class="btn fix">
+            <input type="submit" class="modbtn1" value="登陆" />
+            <a class="a_r" href="/regist">注册</a>
+        </div>
+    </form>
+</div>
+{% if errormessage %}
+<script>
+     alert("{{ errormessage }}")
+</script>
+{% end %}
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>博彦科技工作汇报系统</title>
+<link href="static/css/css.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/static/js/base.js"></script>
+</head>
+
+<body>
+{% if not regist %}
+<div class="header">
+    <div class="backbtn"><a href="/login"><img src="/static/images/backbtn.gif"></a></div>
+    <div class="logo"><img src="/static/images/logo2.gif"></div>
+</div>
+<div class="regist">
+    <form method="post" onsubmit="return true"  action="/regist">
+        <ul>
+            <li><span>邮　箱</span><input name="email" type="text" value="请输入邮箱" /></li>
+            <li><span>用户名</span><input name="username" type="text" value="请输入用户名" /></li>
+            <li><span>密　码</span><input name="password" type="password" value="请输入登陆密码" /></li>
+            <li><span>确认密码</span><input name="password_t" type="password" value="请输入登陆密码" /></li>
+        </ul>
+        <div class="btn">
+            <input type="submit" class="modbtn1" value="注　册" />
+        </div>
+    </form>
+</div>
+{% if errormsg %}
+    <div class="error_p">{{ errormsg }}</div>
+{% end %}
+{% else %}
+
+<div class="header">
+    <div class="logo"><img src="/static/images/logo2.gif"></div>
+</div>
+<div class="success">
+    <h3><span>{{ username }}，</span>您已注册成功！</h3> 
+    <div class="btn"><a class="modbtn1" href="/">进入使用</a></div>
+</div>
+
+{% end %}
+
+</body>
+</html>
